@@ -1,14 +1,14 @@
 {
   "main": {
-    "id": "48cee837d8ff18b6",
+    "id": "dc28301b7824da79",
     "type": "split",
     "children": [
       {
-        "id": "793c8921d493f3ce",
+        "id": "e61254814f944217",
         "type": "tabs",
         "children": [
           {
-            "id": "de9aebb6faecd00e",
+            "id": "45caab85ac297ec3",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -27,15 +27,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "967b0f62c41ee2eb",
+    "id": "d4574023237e3094",
     "type": "split",
     "children": [
       {
-        "id": "2a317c0628f67d1b",
+        "id": "f644e24586b09da3",
         "type": "tabs",
         "children": [
           {
-            "id": "f5876232f6072ded",
+            "id": "67c9d67b4e5aa193",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -48,7 +48,7 @@
             }
           },
           {
-            "id": "61b28284570b2222",
+            "id": "ff1438b6af71588a",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -65,7 +65,7 @@
             }
           },
           {
-            "id": "c89876273e5c4f8d",
+            "id": "b444deed7e091481",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -82,15 +82,15 @@
     "collapsed": true
   },
   "right": {
-    "id": "196ac839588a2b06",
+    "id": "251f1002761ca183",
     "type": "split",
     "children": [
       {
-        "id": "2ccd624bed288e9c",
+        "id": "47cfd5318548a132",
         "type": "tabs",
         "children": [
           {
-            "id": "eaa9570546d96b8e",
+            "id": "8b604eb41213928d",
             "type": "leaf",
             "state": {
               "type": "backlink",
@@ -109,7 +109,7 @@
             }
           },
           {
-            "id": "28e847a3dacdf46d",
+            "id": "98617d6bfdbe8147",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
@@ -123,7 +123,7 @@
             }
           },
           {
-            "id": "435912d40ef253bb",
+            "id": "a8e27f6b3edc80db",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -138,7 +138,7 @@
             }
           },
           {
-            "id": "0559daa5c5721159",
+            "id": "daaab354267da344",
             "type": "leaf",
             "state": {
               "type": "outline",
@@ -169,6 +169,9 @@
       "command-palette:Открыть палитру команд": false
     }
   },
-  "active": "de9aebb6faecd00e",
-  "lastOpenFiles": []
+  "active": "45caab85ac297ec3",
+  "lastOpenFiles": [
+    "spark_client",
+    "Заметки по установке Spark с Docker.md"
+  ]
 }

@@ -26,6 +26,19 @@ mkdir SparkTestInstall
 > Dockerfile
 ```
 
+### 4. Опционально. Монтирование диска к WSL
+
+**Создаем точку (папку) монтирования**
+```bash
+sudo mkdir /mount-disk
+```
+
+**Монтируем дик**
+```bash
+sudo mount -t drvfs D: mount-disk
+```
+
+
 ---
 ## Установка **PySpark** (локально)
 
@@ -91,11 +104,47 @@ spark.stop()
 +---+----+
 ```
 
-
-
 ---
-## Вариант с **Dockerfile**
-### 3. Заполняем Dockerfile
+## Разворот **Spark-Кластера**
+
+**Структура проекта**
+```
+
+```
+
+### Создаем **Spark-master** и **Spark-worker**
+**Содержимое файла docker-compose.yaml**:
+```yaml
+version: '3'
+services:
+  spark-master:
+    image: bitnami/spark:3.5
+    ports:
+      - "8080:8080"  # Web UI
+    environment:
+      - SPARK_MODE=master
+
+  spark-worker:
+    image: bitnami/spark:3.5
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+```
+
+**Запуск docker-compose**
+```bash
+docker-compose up -d
+```
+
+**Адрес сеанса Spark** (Для проверки запуска)
+```
+http://localhost:8080
+```
+
+
+### Заполняем **Dockerfile** (Клиент)
 
 ```Dockerfile
 # Базовый образ (Java 11 обязателен для Spark 3.5.0)
@@ -143,93 +192,3 @@ docker run -it -p 4040:4040 -p 8080:8080 my-spark:3.5.0
 
 
 ---
-## Вариант с **docker-compose**
-
-**Содержимое файла docker-compose.yaml**:
-```yaml
-version: "3"
-
-services:
-  spark-iceberg:
-    image: tabulario/spark-iceberg
-    container_name: spark-iceberg
-    build: spark/
-    networks:
-      iceberg_net:
-    depends_on:
-      - rest
-      - minio
-    volumes:
-      - ./warehouse:/home/iceberg/warehouse
-      - ./notebooks:/home/iceberg/notebooks/notebooks
-    environment:
-      - AWS_ACCESS_KEY_ID=admin
-      - AWS_SECRET_ACCESS_KEY=password
-      - AWS_REGION=us-east-1
-    ports:
-      - 8888:8888
-      - 8080:8080
-      - 10000:10000
-      - 10001:10001
-  rest:
-    image: apache/iceberg-rest-fixture
-    container_name: iceberg-rest
-    networks:
-      iceberg_net:
-    ports:
-      - 8181:8181
-    environment:
-      - AWS_ACCESS_KEY_ID=admin
-      - AWS_SECRET_ACCESS_KEY=password
-      - AWS_REGION=us-east-1
-      - CATALOG_WAREHOUSE=s3://warehouse/
-      - CATALOG_IO__IMPL=org.apache.iceberg.aws.s3.S3FileIO
-      - CATALOG_S3_ENDPOINT=http://minio:9000
-  minio:
-    image: minio/minio
-    container_name: minio
-    environment:
-      - MINIO_ROOT_USER=admin
-      - MINIO_ROOT_PASSWORD=password
-      - MINIO_DOMAIN=minio
-    networks:
-      iceberg_net:
-        aliases:
-          - warehouse.minio
-    ports:
-      - 9001:9001
-      - 9000:9000
-    command: ["server", "/data", "--console-address", ":9001"]
-  mc:
-    depends_on:
-      - minio
-    image: minio/mc
-    container_name: mc
-    networks:
-      iceberg_net:
-    environment:
-      - AWS_ACCESS_KEY_ID=admin
-      - AWS_SECRET_ACCESS_KEY=password
-      - AWS_REGION=us-east-1
-    entrypoint: |
-      /bin/sh -c "
-      until (/usr/bin/mc config host add minio http://minio:9000 admin password) do echo '...waiting...' && sleep 1; done;
-      /usr/bin/mc rm -r --force minio/warehouse;
-      /usr/bin/mc mb minio/warehouse;
-      /usr/bin/mc policy set public minio/warehouse;
-      tail -f /dev/null
-      "
-networks:
-  iceberg_net:
-```
-
-**Запуск docker-compose**
-```bash
-docker-compose up
-```
-
-**Адрес сеанса Spark** (Для проверки запуска)
-```
-http://localhost:8888
-```
-
