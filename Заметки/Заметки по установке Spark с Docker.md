@@ -161,8 +161,6 @@ CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-r
 docker build -t jupyter-pyspark:latest .
 ```
 
-
-
 В **jupiter_docker** создаем **docker-compose.yaml:**
 ```yaml
 version: '3'
@@ -190,7 +188,7 @@ docker-compose up -d
 `mysecretpassword`
 
 **Или в VScode:**
-`select cernel -> `
+`select cernel -> Existing Jypiter Server -> Ввести http://localhost:8888/ и пароль`
 
 
 ---
