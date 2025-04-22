@@ -38,6 +38,12 @@ sudo mkdir /mount-disk
 sudo mount -t drvfs D: mount-disk
 ```
 
+**Прокидываем репозиторий git**
+```bash
+git config --global --add safe.directory /mount-disk/Work/SparkInstallTest
+```
+
+
 
 ---
 ## Установка **PySpark** (локально)
