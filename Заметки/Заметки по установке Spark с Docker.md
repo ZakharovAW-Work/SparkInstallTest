@@ -1,4 +1,4 @@
-## **Основные шаги**
+## **Основные шаги.**
 ### 1. Установить wsl
 ```bash
 wsl.exe --install Ubuntu-24.04
@@ -46,7 +46,7 @@ git config --global --add safe.directory /mount-disk/Work/SparkInstallTest
 
 
 ---
-## Установка **PySpark** (локально)
+## Установка **PySpark** (локально). Для тестирования.
 
 **Ставим Python**
 ```bash
@@ -111,14 +111,97 @@ spark.stop()
 ```
 
 ---
-## Разворот **Spark-Кластера**
+## Запуск **Jypiter** в Docker
+
+Создаем директорию "jupiter_docker/notebooks".
+В **jupiter_docker** создаем **Dockerfile**
+```Dockerfile
+# Базовый образ (выберите один)
+FROM python:3.9-slim-buster           
+
+# Вариант 2 - Установка Jupyter и зависимостей (если не используете готовый образ)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    openjdk-11-jre-headless \
+    curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Установка PySpark и Jupyter
+ARG SPARK_VERSION=3.5.0
+ARG HADOOP_VERSION=3
+
+RUN pip install --no-cache-dir \
+    pyspark==${SPARK_VERSION} \
+    jupyterlab \
+    pandas \
+    matplotlib
+
+# Настройка переменных окружения
+ENV SPARK_HOME=/usr/local/lib/python3.9/site-packages/pyspark
+ENV PATH=$PATH:$SPARK_HOME/bin
+ENV PYSPARK_PYTHON=python3
+ENV PYSPARK_DRIVER_PYTHON=jupyter
+ENV PYSPARK_DRIVER_PYTHON_OPTS='lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root'
+
+# Рабочая директория
+WORKDIR /home/jovyan/work
+
+# Копируем ноутбуки (опционально)
+COPY notebooks/ /home/jovyan/work/
+
+# Порт Jupyter
+EXPOSE 8888
+
+# Запуск Jupyter Lab
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root"]
+```
+
+**Собираем образ**
+```bash
+docker build -t jupyter-pyspark:latest .
+```
+
+
+
+В **jupiter_docker** создаем **docker-compose.yaml:**
+```yaml
+version: '3'
+services:
+  jupyter:
+    # image: jupyter/datascience-notebook
+    image: jupyter-pyspark:latest
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/home/work  # Монтирование папки
+    environment:
+      - JUPYTER_TOKEN=mysecretpassword  # Пароль для доступа
+```
+
+**Запускаем контейнер**
+```bash
+docker-compose up -d
+```
+
+**Теперь можем подключиться к Jypiter Server по адресу:**
+`http://localhost:8888/`
+
+**И ввести пароль** 
+`mysecretpassword`
+
+**Или в VScode:**
+`select cernel -> `
+
+
+---
+## Запуск **Spark-Кластера.**
 
 **Структура проекта**
 ```
 
 ```
 
-### Создаем **Spark-master** и **Spark-worker**
+### Создаем **Spark-master** и **Spark-worker.**
 **Содержимое файла docker-compose.yaml**:
 ```yaml
 version: '3'
