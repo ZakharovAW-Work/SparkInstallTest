@@ -1,10 +1,17 @@
 from pyspark.sql import SparkSession
 
 
-spark = SparkSession.builder \
+
+# spark = SparkSession \
+#     .builder \
+#     .appName("Python Spark SQL basic example") \
+#     .config("spark.some.config.option", "some-value") \
+#     .getOrCreate()
+
+
+spark = SparkSession \
+    .builder \
     .appName("DockerSparkApp") \
-    .master("spark://spark-master:7077") \  
-    .config("spark.executor.memory", "1g") \
     .getOrCreate()
 
 # Пример обработки данных
