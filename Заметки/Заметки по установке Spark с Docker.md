@@ -196,10 +196,29 @@ docker-compose up -d
 
 **Структура проекта**
 ```
+├── spark_client
+│   ├── client_1.py
+│   └── client_2.ipynb
+├── spark_cluster
+│   └── docker-compose.yaml
+├── venv_wsl
+```  
 
+Для выбора интерпретатора в VSCode нажать `ctr+shift+p` и ввести `python: select interpreter`, далее выбрать тот, что указан в наше venv_wsl.
+### Вариант без **Docker**
+
+Зайти в директорию `spark_cluster` и в командной строе ввести:
+```bash
+$ spark-launch-yt 
+--proxy <cluster_name> 
+--autoscaler-period 1s 
+--enable-multi-operation-mode 
+--discovery-path //discovery/path
 ```
 
-### Создаем **Spark-master** и **Spark-worker.**
+
+
+### Создаем **Spark-master** и **Spark-worker**, используя **Docker**.
 **Содержимое файла docker-compose.yaml**:
 ```yaml
 version: '3'
