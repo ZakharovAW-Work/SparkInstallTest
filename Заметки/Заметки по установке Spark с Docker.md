@@ -205,15 +205,74 @@ docker-compose up -d
 ```  
 
 Для выбора интерпретатора в VSCode нажать `ctr+shift+p` и ввести `python: select interpreter`, далее выбрать тот, что указан в наше venv_wsl.
-### Вариант без **Docker**
 
-Зайти в директорию `spark_cluster` и в командной строе ввести:
+### Вариант без **Docker (Standalone - режим)**
+
+**Скачиваем архив spark:** 
 ```bash
-$ spark-launch-yt 
---proxy <cluster_name> 
---autoscaler-period 1s 
---enable-multi-operation-mode 
---discovery-path //discovery/path
+wget https://archive.apache.org/dist/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz
+```
+
+**Распаковываем:**
+```bash
+tar -xzf spark-3.5.0-bin-hadoop3.tgz
+```
+
+Переходим в `spark-3.5.0-bin-hadoop3`.
+
+**Запускаем** `master`
+```bash
+sbin/start-master.sh
+```
+В браузере по `http://localhost:8080/` должна быть доступна страница spark. 
+Тут же смотрим адрес `spark://DESKTOP-SPM5Q5T.:7077`.
+
+
+**Запускаем** `worker`
+```bash
+sbin/start-worker.sh spark://DESKTOP-SPM5Q5T.:7077
+```
+
+В файле `client.py`:
+```python
+spark = SparkSession.builder \
+    .appName("LocalTest") \
+    .master("spark://DESKTOP-SPM5Q5T.:7077") \
+    .getOrCreate()
+
+df = spark.createDataFrame([('Alice', 1)]).show()
+
+spark.stop()
+```
+
+Получаем
+```
++-----+---+                                                                     
+|   _1| _2|
++-----+---+
+|Alice|  1|
++-----+---+
+```
+
+Для **остановки**:
+```bash
+sbin/stop-worker.sh
+sbin/stop-master.sh
+```
+
+
+В `client_2.ipynb` прописываем:
+```python
+import pyspark
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder \
+    .appName("RemoteApp") \
+    .master("spark://DESKTOP-SPM5Q5T.:7077") \
+    .config("spark.driver.host", "localhost") \
+    .config("spark.driver.bindAddress", "0.0.0.0") \
+    .config("spark.executor.memory", "1g") \
+    .getOrCreate()
 ```
 
 
